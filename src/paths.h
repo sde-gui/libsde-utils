@@ -16,8 +16,8 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef __SDE_UTIL__PATHS_H
-#define __SDE_UTIL__PATHS_H
+#ifndef __SDE_UTILS__PATHS_H
+#define __SDE_UTILS__PATHS_H
 
 #include <glib.h>
 

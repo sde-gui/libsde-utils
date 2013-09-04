@@ -16,12 +16,10 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef __SDE_UTILS__STRINGS_H
-#define __SDE_UTILS__STRINGS_H
+#ifndef __SDE_UTILS__SDE_UTILS_H
+#define __SDE_UTILS__SDE_UTILS_H
 
-#include <glib.h>
-
-gboolean su_str_empty(const char * string);
-gboolean su_str_empty_nl(const char* string);
+#include <sde-utils/strings.h>
+#include <sde-utils/paths.h>
 
 #endif

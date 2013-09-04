@@ -16,6 +16,6 @@ target_link_libraries(sde-utils-1.0
 
 file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
 install(FILES ${headers} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/sde-utils-1.0/sde-utils)
-
+install(FILES sde-utils.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/sde-utils-1.0)
 install(TARGETS sde-utils-1.0 LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/)
 
