@@ -16,30 +16,11 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "strings.h"
-#include <string.h>
+#ifndef __SDE_UTIL__PATHS_H
+#define __SDE_UTIL__PATHS_H
 
-/********************************************************************/
+#include <glib.h>
 
-gboolean su_str_empty(const char* string)
-{
-    if (!string)
-        return TRUE;
-    while (*string == ' ' || *string == '\t')
-        string++;
-    return strlen(string) == 0;
-}
+gchar *  su_path_expand_tilda(const char * path);
 
-/********************************************************************/
-
-gboolean su_str_empty_nl(const char* string)
-{
-    if (!string)
-        return TRUE;
-    while (*string == ' ' || *string == '\t' || *string == '\n')
-        string++;
-    return strlen(string) == 0;
-}
-
-/********************************************************************/
-
+#endif

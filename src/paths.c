@@ -17,28 +17,42 @@
  */
 
 #include "strings.h"
-#include <string.h>
+#include <pwd.h>
 
 /********************************************************************/
 
-gboolean su_str_empty(const char* string)
+gchar * su_path_expand_tilda(const char * path)
 {
-    if (!string)
-        return TRUE;
-    while (*string == ' ' || *string == '\t')
-        string++;
-    return strlen(string) == 0;
-}
+    if (path[0] != '~')
+        return g_strdup(path);
 
-/********************************************************************/
+    const char * homedir = NULL;
 
-gboolean su_str_empty_nl(const char* string)
-{
-    if (!string)
-        return TRUE;
-    while (*string == ' ' || *string == '\t' || *string == '\n')
-        string++;
-    return strlen(string) == 0;
+    size_t name_end = 1;
+    while (path[name_end] != '/' && path[name_end] != 0)
+        name_end++;
+
+    if (name_end == 1)
+    {
+        homedir = g_getenv("HOME");
+        if (!homedir)
+            homedir = g_get_home_dir();
+    }
+    if (name_end > 1)
+    {
+        gchar * name = g_strndup(path + 1, name_end - 1);
+        struct passwd * pw = getpwnam(name);
+        if (pw && !su_str_empty(pw->pw_dir))
+            homedir = pw->pw_dir;
+    }
+
+    if (!homedir)
+        homedir = g_get_tmp_dir();
+
+    if (!homedir)
+        homedir = "/tmp";
+
+    return g_strdup_printf("%s%s", homedir, path + name_end);
 }
 
 /********************************************************************/
