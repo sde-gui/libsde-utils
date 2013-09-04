@@ -8,3 +8,6 @@ include(GNUInstallDirs)
 
 add_subdirectory(src)
 
+configure_file(sde-utils-1.0.pc.in sde-utils-1.0.pc @ONLY)
+
+install(FILES sde-utils-1.0.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)

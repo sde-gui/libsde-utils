@@ -6,16 +6,16 @@ add_definitions(
     ${glib2_CFLAGS})
 
 
-add_library(sde-utils MODULE
+add_library(sde-utils-1.0 MODULE
     strings.c
     paths.c
 )
 
-target_link_libraries(sde-utils
+target_link_libraries(sde-utils-1.0
     ${glib2_LIBRARIES})
 
 file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
-install(FILES ${headers} DESTINATION include/sde-utils-1.0/sde-utils)
+install(FILES ${headers} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/sde-utils-1.0/sde-utils)
 
-install(TARGETS sde-utils LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/)
+install(TARGETS sde-utils-1.0 LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/)
 
