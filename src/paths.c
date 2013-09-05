@@ -114,7 +114,7 @@ gchar * su_path_resolve_agent_id_by_pointer(void * p, const char * default_id)
 }
 
 /********************************************************************/
-void su_path_register_agent_prefix(const char * agent_id, const char * prefix)
+void su_path_register_default_agent_prefix(const char * agent_id, const char * prefix)
 {
     if (!agent_id)
         return;
@@ -206,7 +206,7 @@ gchar * su_path_resolve_resource_va(const char * agent_id, va_list ap)
     #undef RETURN
 
 end:
-    g_print("resource %s:%s resolved as %s\n", agent_id ? agent_id : "(NULL)", resource_id, result ? result : "(NULL)");
+    g_print("resource %s:%s resolved as \"%s\"\n", agent_id ? agent_id : "(NULL)", resource_id, result ? result : "(NULL)");
 
     g_free(resource_id);
     return result;
@@ -220,7 +220,7 @@ gchar * su_path_resolve_resource(const char * agent_id, ...)
     va_end(ap);
 }
 
-gchar * su_path_resolve_config_va (SU_PATH_CONFIG_TYPE type, const char * domain, const char * profile, va_list ap)
+gchar * su_path_resolve_config_va(const char * agent_id, SU_PATH_CONFIG_TYPE type, const char * domain, const char * profile, va_list ap)
 {
     gchar * result = NULL;
     gchar * suffix = su_build_filename_va(ap);
@@ -275,7 +275,7 @@ again:
         else
             resource_id = g_build_filename(CONFIG_RESOURCE_PREFIX, domain, suffix, NULL);
 
-        result = su_path_resolve_resource(NULL, resource_id, NULL);
+        result = su_path_resolve_resource(agent_id, resource_id, NULL);
         g_free(resource_id);
 
         if (g_file_test(result, G_FILE_TEST_EXISTS))
@@ -292,7 +292,7 @@ again:
     }
 
 end:
-    g_print("config %s:%s:%s:%s resolved as %s\n", domain, profile ? profile : "", suffix,
+    g_print("config %s:%s:%s:%s resolved as \"%s\"\n", domain, profile ? profile : "", suffix,
         type == SU_PATH_CONFIG_USER_W ? "USER_W" :
         type == SU_PATH_CONFIG_USER ? "USER" :
         "SYSTEM",
@@ -302,11 +302,11 @@ end:
     return result;
 }
 
-gchar * su_path_resolve_config(SU_PATH_CONFIG_TYPE type, const char * domain, const char * profile, ...)
+gchar * su_path_resolve_config(const char * agent_id, SU_PATH_CONFIG_TYPE type, const char * domain, const char * profile, ...)
 {
     va_list ap;
     va_start(ap, profile);
-    return su_path_resolve_config_va(type, domain, profile, ap);
+    return su_path_resolve_config_va(agent_id, type, domain, profile, ap);
     va_end(ap);
 }
 
@@ -334,10 +334,10 @@ FILE * su_path_fopen_resource(const char * mode, const char * agent_id, ...)
     va_end(ap);
 }
 
-FILE * su_path_fopen_config_va(const char * mode, SU_PATH_CONFIG_TYPE type, const char * domain, const char * profile, va_list ap)
+FILE * su_path_fopen_config_va(const char * mode, const char * agent_id, SU_PATH_CONFIG_TYPE type, const char * domain, const char * profile, va_list ap)
 {
     FILE * file = NULL;
-    gchar * path = su_path_resolve_config_va(type, domain, profile, ap);
+    gchar * path = su_path_resolve_config_va(agent_id, type, domain, profile, ap);
     if (path)
     {
         if (!mode)
@@ -348,11 +348,11 @@ FILE * su_path_fopen_config_va(const char * mode, SU_PATH_CONFIG_TYPE type, cons
     return file;
 }
 
-FILE * su_path_fopen_config(const char * mode, SU_PATH_CONFIG_TYPE type, const char * domain, const char * profile, ...)
+FILE * su_path_fopen_config(const char * mode, const char * agent_id, SU_PATH_CONFIG_TYPE type, const char * domain, const char * profile, ...)
 {
     va_list ap;
     va_start(ap, profile);
-    return su_path_fopen_config_va(mode, type, domain, profile, ap);
+    return su_path_fopen_config_va(mode, agent_id, type, domain, profile, ap);
     va_end(ap);
 }
 
@@ -378,10 +378,10 @@ gchar * su_path_read_resource(const char * agent_id, ...)
     va_end(ap);
 }
 
-gchar * su_path_read_config_va(SU_PATH_CONFIG_TYPE type, const char * domain, const char * profile, va_list ap)
+gchar * su_path_read_config_va(const char * agent_id, SU_PATH_CONFIG_TYPE type, const char * domain, const char * profile, va_list ap)
 {
     gchar * contents = NULL;
-    gchar * path = su_path_resolve_config_va(type, domain, profile, ap);
+    gchar * path = su_path_resolve_config_va(agent_id, type, domain, profile, ap);
     if (path)
     {
         g_file_get_contents(path, &contents, NULL, NULL);
@@ -390,11 +390,11 @@ gchar * su_path_read_config_va(SU_PATH_CONFIG_TYPE type, const char * domain, co
     return contents;
 }
 
-gchar * su_path_read_config(SU_PATH_CONFIG_TYPE type, const char * domain, const char * profile, ...)
+gchar * su_path_read_config(const char * agent_id, SU_PATH_CONFIG_TYPE type, const char * domain, const char * profile, ...)
 {
     va_list ap;
     va_start(ap, profile);
-    return su_path_read_config_va(type, domain, profile, ap);
+    return su_path_read_config_va(agent_id, type, domain, profile, ap);
     va_end(ap);
 }
 

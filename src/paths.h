@@ -46,24 +46,24 @@ void     su_path_register_default_agent_prefix(const char * agent_id, const char
 
 gchar *  su_path_resolve_resource_va(const char * agent_id, va_list ap);
 gchar *  su_path_resolve_resource   (const char * agent_id, ...);
-gchar *  su_path_resolve_config_va  (SU_PATH_CONFIG_TYPE type, const char * domain,
-                                     const char * profile, va_list ap);
-gchar *  su_path_resolve_config     (SU_PATH_CONFIG_TYPE type, const char * domain,
-                                     const char * profile, ...);
+gchar *  su_path_resolve_config_va  (const char * agent_id, SU_PATH_CONFIG_TYPE type,
+                                     const char * domain, const char * profile, va_list ap);
+gchar *  su_path_resolve_config     (const char * agent_id, SU_PATH_CONFIG_TYPE type,
+                                     const char * domain, const char * profile, ...);
 
 FILE  *  su_path_fopen_resource_va(const char * mode, const char * agent_id, va_list ap);
 FILE  *  su_path_fopen_resource   (const char * mode, const char * agent_id, ...);
-FILE  *  su_path_fopen_config_va  (const char * mode, SU_PATH_CONFIG_TYPE type,
+FILE  *  su_path_fopen_config_va  (const char * mode, const char * agent_id, SU_PATH_CONFIG_TYPE type,
                                    const char * domain, const char * profile, va_list ap);
-FILE  *  su_path_fopen_config     (const char * mode, SU_PATH_CONFIG_TYPE type,
+FILE  *  su_path_fopen_config     (const char * mode, const char * agent_id, SU_PATH_CONFIG_TYPE type,
                                    const char * domain, const char * profile, ...);
 
 gchar *  su_path_read_resource_va(const char * agent_id, va_list ap);
 gchar *  su_path_read_resource   (const char * agent_id, ...);
-gchar *  su_path_read_config_va  (SU_PATH_CONFIG_TYPE type, const char * domain,
-                                     const char * profile, va_list ap);
-gchar *  su_path_read_config     (SU_PATH_CONFIG_TYPE type, const char * domain,
-                                     const char * profile, ...);
+gchar *  su_path_read_config_va  (const char * agent_id, SU_PATH_CONFIG_TYPE type,
+                                  const char * domain, const char * profile, va_list ap);
+gchar *  su_path_read_config     (const char * agent_id, SU_PATH_CONFIG_TYPE type,
+                                  const char * domain, const char * profile, ...);
 
 /********************************************************************/
 
