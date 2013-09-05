@@ -16,12 +16,11 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef __SDE_UTILS__SDE_UTILS_H
-#define __SDE_UTILS__SDE_UTILS_H
+#ifndef __SDE_UTILS__LAUNCHER_H
+#define __SDE_UTILS__LAUNCHER_H
 
-#include <sde-utils/strings.h>
-#include <sde-utils/paths.h>
-#include <sde-utils/proc.h>
-#include <sde-utils/launcher.h>
+#include <glib.h>
+
+gchar * su_translate_app_exec_to_command_line(const char* pexec, GList* file_list);
 
 #endif
