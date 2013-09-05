@@ -21,10 +21,19 @@
 
 #include <glib.h>
 
+typedef enum _SU_READ_LIST_OPTIONS
+{
+    SU_READ_LIST_IGNORE_COMMENTS = 1 << 0,
+    SU_READ_LIST_IGNORE_EMPTY_LINES = 1 << 1,
+    SU_READ_LIST_IGNORE_WHITESPACES = 1 << 2
+} SU_READ_LIST_OPTIONS;
+
 gboolean su_str_empty(const char * string);
 gboolean su_str_empty_nl(const char* string);
 
 void     su_str_get_format_for_bytes_with_suffix(guint64  bytes, const char ** format, guint64 * b1, guint64 * b2);
 gchar *  su_str_format_bytes_with_suffix(guint64  bytes);
+
+gchar ** su_read_lines_from_file(gchar * path, SU_READ_LIST_OPTIONS options);
 
 #endif
