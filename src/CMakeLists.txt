@@ -9,6 +9,7 @@ add_definitions(
 add_library(sde-utils-1.0 MODULE
     strings.c
     paths.c
+    proc.c
 )
 
 target_link_libraries(sde-utils-1.0

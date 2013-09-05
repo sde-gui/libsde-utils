@@ -21,5 +21,6 @@
 
 #include <sde-utils/strings.h>
 #include <sde-utils/paths.h>
+#include <sde-utils/proc.h>
 
 #endif
