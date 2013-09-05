@@ -114,6 +114,7 @@ gchar * su_path_resolve_agent_id_by_pointer(void * p, const char * default_id)
 }
 
 /********************************************************************/
+
 void su_path_register_default_agent_prefix(const char * agent_id, const char * prefix)
 {
     if (!agent_id)

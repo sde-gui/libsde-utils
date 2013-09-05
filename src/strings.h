@@ -24,4 +24,7 @@
 gboolean su_str_empty(const char * string);
 gboolean su_str_empty_nl(const char* string);
 
+void     su_str_get_format_for_bytes_with_suffix(guint64  bytes, const char ** format, guint64 * b1, guint64 * b2);
+gchar *  su_str_format_bytes_with_suffix(guint64  bytes);
+
 #endif
