@@ -55,6 +55,9 @@ void su_log_message_va(SU_LOG_LEVEL level, const char * format, va_list ap)
     if (((int)level) > su_log_level)
         return;
 
+    if (!format || !*format)
+        return;
+
     FILE * stream = stderr;
     const char * modifier = "";
     switch (level)
