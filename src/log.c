@@ -106,6 +106,8 @@ void su_log_message_va(SU_LOG_LEVEL level, const char * format, va_list ap)
         f = "%s%s["LIGHT_YELLOW_COLOR"%s"NORMAL_COLOR"] %s";
 
     const char * program_name = g_get_prgname();
+    if (!program_name)
+        program_name = "<unknown>";
 
     int len = strlen(format) + strlen(modifier) + strlen(time_buffer) + strlen(program_name) + 20;
 
