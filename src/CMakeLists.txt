@@ -20,6 +20,7 @@ add_library(sde-utils-1.0 SHARED
     paths.c
     proc.c
     launcher.c
+    log.c
 )
 
 target_link_libraries(sde-utils-1.0

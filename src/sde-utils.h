@@ -23,5 +23,6 @@
 #include <sde-utils/paths.h>
 #include <sde-utils/proc.h>
 #include <sde-utils/launcher.h>
+#include <sde-utils/log.h>
 
 #endif
