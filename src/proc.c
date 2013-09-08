@@ -18,8 +18,9 @@
 
 #define _GNU_SOURCE
 #include <dlfcn.h>
-#include "proc.h"
 #include <stdint.h>
+#include "log.h"
+#include "proc.h"
 
 /********************************************************************/
 
@@ -28,7 +29,7 @@ const char * su_get_module_path(void * p)
     Dl_info  info;
     if (dladdr(p, &info) != 0)
     {
-        g_print("pointer 0x%llX identified as module %s\n", (unsigned long long)(uintptr_t)p, info.dli_fname);
+        su_log_debug("pointer 0x%llX identified as module %s\n", (unsigned long long)(uintptr_t)p, info.dli_fname);
         return info.dli_fname;
     }
     return NULL;

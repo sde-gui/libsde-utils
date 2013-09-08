@@ -19,6 +19,7 @@
 #include "paths.h"
 #include "proc.h"
 #include "strings.h"
+#include "log.h"
 #include <string.h>
 #include <pwd.h>
 
@@ -99,7 +100,7 @@ gchar * su_path_resolve_agent_id_by_path(const char * path, const char * default
 
             g_hash_table_insert(autodetected_agent_prefix_table, agent_id, prefix);
 
-            g_print("path %s autodetected as agent %s with prefix %s\n", path, agent_id, prefix);
+            su_log_debug("path %s autodetected as agent %s with prefix %s\n", path, agent_id, prefix);
 
             return g_strdup(agent_id);
         }
@@ -127,7 +128,7 @@ void su_path_register_default_agent_prefix(const char * agent_id, const char * p
 
     g_hash_table_insert(default_agent_prefix_table, g_strdup(agent_id), g_strdup(prefix));
 
-    g_print("agent %s registered with default prefix %s\n", agent_id, prefix);
+    su_log_debug("agent %s registered with default prefix %s\n", agent_id, prefix);
 }
 
 gchar * su_path_resolve_resource_va(const char * agent_id, va_list ap)
@@ -207,7 +208,8 @@ gchar * su_path_resolve_resource_va(const char * agent_id, va_list ap)
     #undef RETURN
 
 end:
-    g_print("resource %s:%s resolved as \"%s\"\n", agent_id ? agent_id : "(NULL)", resource_id, result ? result : "(NULL)");
+    su_log_debug("resource %s:%s resolved as \"%s\"\n",
+        agent_id ? agent_id : "(NULL)", resource_id, result ? result : "(NULL)");
 
     g_free(resource_id);
     return result;
@@ -293,7 +295,7 @@ again:
     }
 
 end:
-    g_print("config %s:%s:%s:%s resolved as \"%s\"\n", domain, profile ? profile : "", suffix,
+    su_log_debug("config %s:%s:%s:%s resolved as \"%s\"\n", domain, profile ? profile : "", suffix,
         type == SU_PATH_CONFIG_USER_W ? "USER_W" :
         type == SU_PATH_CONFIG_USER ? "USER" :
         "SYSTEM",
