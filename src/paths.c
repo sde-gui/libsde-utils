@@ -22,6 +22,7 @@
 #include "log.h"
 #include <string.h>
 #include <pwd.h>
+#include <unistd.h>
 
 #define CONFIG_RESOURCE_PREFIX "sde-config"
 #define TEMPLATE_PROFILE "template"
@@ -68,6 +69,40 @@ gchar * su_path_expand_tilda(const char * path)
 
 /********************************************************************/
 
+#define RES_USER_DATA_DIR (1 << 0)
+#define RES_AUTODETECTED_DIR (1 << 1)
+
+static unsigned _res_flags = 0;
+static gboolean _res_flags_initialized = 0;
+
+static unsigned _get_res_flags()
+{
+    if (_res_flags_initialized)
+        return _res_flags;
+
+    gboolean disable_user_data_dir = FALSE;
+    gboolean disable_autodetected_dir = FALSE;
+
+    gboolean id0 = (getuid() == 0 || geteuid() == 0 || getgid() == 0 || getegid() == 0);
+
+    disable_user_data_dir |= id0;
+    disable_user_data_dir |= (g_strcmp0(g_getenv("SDE_ALLOW_USER_DATA_DIR_RESOURCE_RESOLUTION"), "TRUE") != 0);
+
+    disable_autodetected_dir |= id0;
+    disable_autodetected_dir |= (g_strcmp0(g_getenv("SDE_ALLOW_AGENT_PREFIX_AUTODETECTION"), "TRUE") != 0);
+
+    if (!disable_user_data_dir)
+        _res_flags = _res_flags | RES_USER_DATA_DIR;
+    if (!disable_autodetected_dir)
+        _res_flags = _res_flags | RES_AUTODETECTED_DIR;
+
+    _res_flags_initialized = TRUE;
+
+    return _res_flags;
+}
+
+/********************************************************************/
+
 static GHashTable * default_agent_prefix_table = NULL;
 static GHashTable * autodetected_agent_prefix_table = NULL;
 
@@ -76,6 +111,9 @@ static GHashTable * autodetected_agent_prefix_table = NULL;
 gchar * su_path_resolve_agent_id_by_path(const char * path, const char * default_id)
 {
     if (!path)
+        return g_strdup(default_id);
+
+    if (!(_get_res_flags() & RES_AUTODETECTED_DIR))
         return g_strdup(default_id);
 
     const char * pattern = "/" AGENT_SPECIFIC_RESOURCE "/";
@@ -131,7 +169,9 @@ void su_path_register_default_agent_prefix(const char * agent_id, const char * p
     su_log_debug("agent %s registered with default prefix %s\n", agent_id, prefix);
 }
 
-gchar * su_path_resolve_resource_va(const char * agent_id, va_list ap)
+/********************************************************************/
+
+static gchar * _path_resolve_resource_va(const char * agent_id, unsigned flags, va_list ap)
 {
     gchar * result = NULL;
     gchar * resource_id = su_build_filename_va(ap);
@@ -142,42 +182,39 @@ gchar * su_path_resolve_resource_va(const char * agent_id, va_list ap)
         g_free(result); \
         result = NULL;
 
+    flags = flags & _get_res_flags();
 
-    if (!su_str_empty(agent_id))
+    if (flags & RES_USER_DATA_DIR)
     {
-        result = g_build_filename(g_get_user_data_dir(), AGENT_SPECIFIC_RESOURCE, agent_id, resource_id, NULL);
-        RETURN;
+        if (!su_str_empty(agent_id))
+        {
+            result = g_build_filename(g_get_user_data_dir(), AGENT_SPECIFIC_RESOURCE, agent_id, resource_id, NULL);
+            RETURN;
+            result = g_build_filename(g_get_user_data_dir(), AGENT_SPECIFIC_RESOURCE, agent_id, "share", resource_id, NULL);
+            RETURN;
+        }
 
-        result = g_build_filename(g_get_user_data_dir(), AGENT_SPECIFIC_RESOURCE, agent_id, "share", resource_id, NULL);
-        RETURN;
-    }
-
-    {
         result = g_build_filename(g_get_user_data_dir(), COMMON_RESOURCE, resource_id, NULL);
         RETURN;
-
         result = g_build_filename(g_get_user_data_dir(), COMMON_RESOURCE, "share", resource_id, NULL);
         RETURN;
     }
+
 
     if (!su_str_empty(agent_id))
     {
         result = g_build_filename(SYSTEM_LOCAL_RESOURCE_PREFIX, AGENT_SPECIFIC_RESOURCE, agent_id, resource_id, NULL);
         RETURN;
-
         result = g_build_filename(SYSTEM_LOCAL_RESOURCE_PREFIX, AGENT_SPECIFIC_RESOURCE, agent_id, "share", resource_id, NULL);
         RETURN;
     }
 
-    {
-        result = g_build_filename(SYSTEM_LOCAL_RESOURCE_PREFIX, COMMON_RESOURCE, resource_id, NULL);
-        RETURN;
+    result = g_build_filename(SYSTEM_LOCAL_RESOURCE_PREFIX, COMMON_RESOURCE, resource_id, NULL);
+    RETURN;
+    result = g_build_filename(SYSTEM_LOCAL_RESOURCE_PREFIX, COMMON_RESOURCE, "share", resource_id, NULL);
+    RETURN;
 
-        result = g_build_filename(SYSTEM_LOCAL_RESOURCE_PREFIX, COMMON_RESOURCE, "share", resource_id, NULL);
-        RETURN;
-    }
-
-    if (!su_str_empty(agent_id) && autodetected_agent_prefix_table)
+    if ((flags & RES_AUTODETECTED_DIR) && !su_str_empty(agent_id) && autodetected_agent_prefix_table)
     {
         const char * prefix = g_hash_table_lookup(autodetected_agent_prefix_table, agent_id);
 
@@ -185,7 +222,6 @@ gchar * su_path_resolve_resource_va(const char * agent_id, va_list ap)
         {
             result = g_build_filename(prefix, resource_id, NULL);
             RETURN;
-
             result = g_build_filename(prefix, "share", resource_id, NULL);
             RETURN;
         }
@@ -199,7 +235,6 @@ gchar * su_path_resolve_resource_va(const char * agent_id, va_list ap)
         {
             result = g_build_filename(prefix, resource_id, NULL);
             RETURN;
-
             result = g_build_filename(prefix, "share", resource_id, NULL);
             RETURN;
         }
@@ -213,6 +248,11 @@ end:
 
     g_free(resource_id);
     return result;
+}
+
+gchar * su_path_resolve_resource_va(const char * agent_id, va_list ap)
+{
+    return _path_resolve_resource_va(agent_id, 0xFFFF, ap);
 }
 
 gchar * su_path_resolve_resource(const char * agent_id, ...)
