@@ -8,6 +8,6 @@ include(GNUInstallDirs)
 
 add_subdirectory(src)
 
-configure_file(sde-utils-1.0.pc.in sde-utils-1.0.pc @ONLY)
+configure_file(sde-utils-1.0.pc.in "${CMAKE_CURRENT_BINARY_DIR}/sde-utils-1.0.pc" @ONLY)
 
-install(FILES sde-utils-1.0.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/sde-utils-1.0.pc" DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
