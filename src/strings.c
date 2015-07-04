@@ -25,20 +25,9 @@ gboolean su_str_empty(const char* string)
 {
     if (!string)
         return TRUE;
-    while (*string == ' ' || *string == '\t')
-        string++;
-    return strlen(string) == 0;
-}
-
-/********************************************************************/
-
-gboolean su_str_empty_nl(const char* string)
-{
-    if (!string)
-        return TRUE;
     while (*string == ' ' || *string == '\t' || *string == '\n')
         string++;
-    return strlen(string) == 0;
+    return *string == 0;
 }
 
 /********************************************************************/
