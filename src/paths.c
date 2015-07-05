@@ -321,7 +321,7 @@ again:
         result = su_path_resolve_resource(agent_id, resource_id, NULL);
         g_free(resource_id);
 
-        if (g_file_test(result, G_FILE_TEST_EXISTS))
+        if (result && g_file_test(result, G_FILE_TEST_EXISTS))
             goto end;
 
         g_free(result);
