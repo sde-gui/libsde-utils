@@ -19,8 +19,8 @@
 #define _GNU_SOURCE
 #include <dlfcn.h>
 #include <stdint.h>
-#include "log.h"
-#include "proc.h"
+#include <sde-utils/log.h>
+#include <sde-utils/proc.h>
 
 /********************************************************************/
 

@@ -16,10 +16,10 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "paths.h"
-#include "proc.h"
-#include "strings.h"
-#include "log.h"
+#include <sde-utils/paths.h>
+#include <sde-utils/proc.h>
+#include <sde-utils/strings.h>
+#include <sde-utils/log.h>
 #include <string.h>
 #include <pwd.h>
 #include <unistd.h>

@@ -16,7 +16,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "launcher.h"
+#include <sde-utils/launcher.h>
 #include <string.h>
 
 /********************************************************************/
