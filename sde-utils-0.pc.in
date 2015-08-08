@@ -4,9 +4,9 @@ libdir=@libdir@
 pkgincludedir=@includedir@/@PACKAGE@
 datadir=@datadir@
 
-Name: sde-utils-1.0
+Name: @PACKAGE@
 Description: SDE C Utility Library
 Version: 0.1
 Requires: glib-2.0 gobject-2.0
-Libs: -L${libdir} -lsde-utils-1.0
+Libs: -L${libdir} -l@PACKAGE@
 Cflags: -I${pkgincludedir}

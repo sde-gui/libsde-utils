@@ -1,5 +1,5 @@
 AC_PREREQ(2.53)
-AC_INIT(libsde-utils-1.0, 0.1.0-alpha, http://make-linux.org/)
+AC_INIT(sde-utils-0, 0.1.0-alpha, http://make-linux.org/)
 AM_INIT_AUTOMAKE
 AM_MAINTAINER_MODE([enable])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES])
@@ -134,7 +134,7 @@ case `$LD --sort-common -v 2>&1 </dev/null` in
 esac
 
 AC_CONFIG_FILES([
-    sde-utils-1.0.pc
+    sde-utils-0.pc
     Makefile
     src/Makefile
     include/Makefile
