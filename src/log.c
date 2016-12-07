@@ -93,7 +93,7 @@ void su_log_message_va(SU_LOG_LEVEL level, const char * format, va_list ap)
 {
     if (su_log_level < 0)
     {
-        const char * s = g_getenv("SDE_UTILS_LOG_LEVEL");
+        const char * s = g_getenv("SDE_LOG_LEVEL");
         if (s)
             su_log_level = atoi(s);
         else
