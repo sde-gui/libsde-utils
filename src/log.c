@@ -28,20 +28,65 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include <unistd.h>
 #include <time.h>
 
 int su_log_level = -1;
 
+typedef enum {
+    RED,
+    GREEN,
+    ORANGE,
+    BLUE,
+    TEAL,
+    LIGHT_YELLOW,
+    LIGHT_BLUE,
+    LIGHT_PURPLE,
+    NORMAL
+} Color;
 
-#define RED_COLOR               "\033[0;31m"
-#define GREEN_COLOR             "\033[0;32m"
-#define ORANGE_COLOR            "\033[0;33m"
-#define BLUE_COLOR              "\033[0;34m"
-#define TEAL_COLOR              "\033[0;36m"
-#define LIGHT_YELLOW_COLOR      "\033[1;33m"
-#define LIGHT_BLUE_COLOR        "\033[1;34m"
-#define LIGHT_PURPLE_COLOR      "\033[1;35m"
-#define NORMAL_COLOR            "\033[0m"
+static int is_colors_supported(void)
+{
+    static int supported = -1;
+
+    if (supported < 0)
+    {
+        const char * s = g_getenv("TERM");
+        supported = (
+            g_str_has_prefix(s, "xterm")  ||
+            g_str_has_prefix(s, "rxvt")   ||
+            g_str_has_prefix(s, "Eterm")  ||
+            g_str_has_prefix(s, "aterm")  ||
+            g_str_has_prefix(s, "kterm")  ||
+            g_str_has_prefix(s, "gnome")  ||
+            g_str_has_prefix(s, "screen")
+        ) ? 1 : 0;
+    }
+
+    return supported;
+}
+
+static const char * color(Color c, FILE * stream)
+{
+    if (!is_colors_supported() || !stream || !isatty(fileno(stream)))
+        return "";
+
+    switch (c)
+    {
+        case RED:          return "\033[0;31m";
+        case GREEN:        return "\033[0;32m";
+        case ORANGE:       return "\033[0;33m";
+        case BLUE:         return "\033[0;34m";
+        case TEAL:         return "\033[0;36m";
+        case LIGHT_YELLOW: return "\033[1;33m";
+        case LIGHT_BLUE:   return "\033[1;34m";
+        case LIGHT_PURPLE: return "\033[1;35m";
+
+        case NORMAL:
+        default:
+                           return "\033[0m";
+    }
+}
 
 
 void su_log_message_va(SU_LOG_LEVEL level, const char * format, va_list ap)
@@ -63,38 +108,39 @@ void su_log_message_va(SU_LOG_LEVEL level, const char * format, va_list ap)
 
     FILE * stream = stderr;
     const char * modifier = "";
+    Color modifier_color;
     switch (level)
     {
-            case SU_LOG_ERROR:
-            {
-                    modifier = RED_COLOR "[ERR] " NORMAL_COLOR;
-                    break;
-            }
-            case SU_LOG_WARNING:
-            {
-                    modifier = ORANGE_COLOR "[WRN] " NORMAL_COLOR;
-                    break;
-            }
-            case SU_LOG_INFO:
-            {
-                    modifier = GREEN_COLOR "[INF] " NORMAL_COLOR;
-                    break;
-            }
-            case SU_LOG_DEBUG:
-            {
-                    modifier = TEAL_COLOR "[DBG] " NORMAL_COLOR;
-                    break;
-            }
-            case SU_LOG_DEBUG_SPAM:
-            {
-                    modifier = BLUE_COLOR "[DBG] " NORMAL_COLOR;
-                    break;
-            }
-            default:
-            {
-                    modifier = RED_COLOR "[XXX] " NORMAL_COLOR;
-                    break;
-            }
+        case SU_LOG_ERROR:
+        {
+            modifier = "ERR"; modifier_color = RED;
+            break;
+        }
+        case SU_LOG_WARNING:
+        {
+            modifier = "WRN"; modifier_color = ORANGE;
+            break;
+        }
+        case SU_LOG_INFO:
+        {
+            modifier = "INF"; modifier_color = GREEN;
+            break;
+        }
+        case SU_LOG_DEBUG:
+        {
+            modifier = "DBG"; modifier_color = TEAL;
+            break;
+        }
+        case SU_LOG_DEBUG_SPAM:
+        {
+            modifier = "DBG"; modifier_color = BLUE;
+            break;
+        }
+        default:
+        {
+            modifier = "XXX"; modifier_color = RED;
+            break;
+        }
     }
 
     time_t current_time = time(NULL);
@@ -102,30 +148,28 @@ void su_log_message_va(SU_LOG_LEVEL level, const char * format, va_list ap)
     char time_buffer[256];
     time_buffer[0] = 0;
     if (local_time != NULL)
-    {
-            strftime(time_buffer, 256, "%Y-%m-%d %T ", local_time);
-    }
-
-    const char * f = "%s%s["LIGHT_YELLOW_COLOR"%s"NORMAL_COLOR"] %s\n";
-    int format_len = strlen(format);
-    if (format_len > 0 && format[format_len - 1] == '\n')
-        f = "%s%s["LIGHT_YELLOW_COLOR"%s"NORMAL_COLOR"] %s";
+        strftime(time_buffer, 256, "%Y-%m-%d %T", local_time);
 
     const char * program_name = g_get_prgname();
     if (!program_name)
         program_name = "<unknown>";
 
-    int len = strlen(format) + strlen(modifier) + strlen(time_buffer) + strlen(program_name) + 20;
+    fprintf(stream, "%s[%s]%s %s [%s%s%s] ",
+        color(modifier_color, stream),
+        modifier,
+        color(NORMAL, stream),
+        time_buffer,
+        color(LIGHT_YELLOW, stream),
+        program_name,
+        color(NORMAL, stream)
+    );
 
-    char * buffer = (char *) malloc(len + 1);
+    vfprintf(stream, format, ap);
 
-    snprintf(buffer, len, f, modifier, time_buffer, program_name, format);
+    int format_len = strlen(format);
+    if (format_len == 0 || format[format_len - 1] != '\n')
+        fprintf(stream, "\n");
 
-    buffer[len] = 0;
-
-    vfprintf(stream, buffer, ap);
-
-    free(buffer);
 }
 
 /********************************************************************/
