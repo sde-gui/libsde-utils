@@ -33,7 +33,7 @@ dnl ================================================================
 dnl Checks for libraries.
 dnl ================================================================
 
-pkg_modules="glib-2.0 >= 2.36"
+pkg_modules="glib-2.0 >= 2.32"
 PKG_CHECK_MODULES(PACKAGE, [$pkg_modules])
 AC_SUBST(PACKAGE_CFLAGS)
 AC_SUBST(PACKAGE_LIBS)
