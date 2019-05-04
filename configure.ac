@@ -1,5 +1,6 @@
 AC_PREREQ(2.53)
 AC_INIT(sde-utils-0, 0.1.0-alpha, http://make-linux.org/)
+AC_CONFIG_AUX_DIR([build-aux])
 AM_INIT_AUTOMAKE
 AM_MAINTAINER_MODE([enable])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES])
