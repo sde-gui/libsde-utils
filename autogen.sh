@@ -9,6 +9,7 @@ set -xe
 ###############################################################################
 
 SRC_DIR="${SRC_DIR:-}"
+test -z "$SRC_DIR" && SRC_DIR="`pwd`"
 
 AC_VERSION="${AC_VERSION:-}"
 AM_VERSION="${AC_VERSION:-}"
@@ -60,10 +61,6 @@ esac
 
 ###############################################################################
 
-if [ -z "$SRC_DIR" ] ; then
-    SRC_DIR="`pwd`"
-fi
-
 if echo "$SRC_DIR" | grep -E -q '[[:space:]]' ; then
     printf "\nThe source path \"%q\" contains whitespace characters.\nPlease fix it.\n" "$SRC_DIR"
     exit 1
@@ -74,8 +71,23 @@ fi
 (
     cd "$SRC_DIR"
 
+    ACLOCAL_ARG="$ACLOCAL_ARG -I m4"
+    test -d m4-sde && ACLOCAL_ARG="$ACLOCAL_ARG -I m4-sde"
+    test -d m4-static && ACLOCAL_ARG="$ACLOCAL_ARG -I m4-static"
+
     if [ "x${ACLOCAL_DIR}" != "x" ]; then
         ACLOCAL_ARG="$ACLOCAL_ARG -I $ACLOCAL_DIR"
+    fi
+
+    if grep -q '^ACLOCAL_AMFLAGS' Makefile.am ; then
+        sed -i 's/^ACLOCAL_AMFLAGS[ ]*=.*/ACLOCAL_AMFLAGS = '"$ACLOCAL_ARG"'/' Makefile.am
+    else
+        (
+            cat Makefile.am
+            echo ""
+            echo "ACLOCAL_AMFLAGS = $ACLOCAL_ARG"
+        ) > Makefile.am.tmp
+        mv Makefile.am.tmp Makefile.am
     fi
 
     test -f aclocal.m4 && rm aclocal.m4
@@ -83,14 +95,17 @@ fi
     mkdir m4
 
     if grep -q "^AM_GNU_GETTEXT" ./configure.ac ; then
+        $AUTOPOINT --version | head -1
         $AUTOPOINT --force
     fi
 
     if grep -q "^AM_GLIB_GNU_GETTEXT" ./configure.ac ; then
+        $GLIB_GETTEXTIZE --version | head -1
         $GLIB_GETTEXTIZE --force --copy
     fi
 
     if grep -q "^GTK_DOC_CHECK" ./configure.ac ; then
+        $GTKDOCIZE --version | head -1
         $GTKDOCIZE --copy
         set +x
         echo
@@ -101,11 +116,18 @@ fi
     fi
 
     if grep -E -q "^(AC_PROG_INTLTOOL|IT_PROG_INTLTOOL)" ./configure.ac ; then
+        $INTLTOOLIZE --version | head -1
         $INTLTOOLIZE --force --copy --automake
     fi
 
+    $LIBTOOLIZE --version | head -1
+    $ACLOCAL --version | head -1
+    $AUTOHEADER --version | head -1
+    $AUTOMAKE --version | head -1
+    $AUTOCONF --version | head -1
+
+    $LIBTOOLIZE --force --copy
     $ACLOCAL $ACLOCAL_ARG
-    $LIBTOOLIZE
     $AUTOHEADER --force
     $AUTOMAKE --add-missing --copy --include-deps
     $AUTOCONF
@@ -113,3 +135,4 @@ fi
     rm -rf autom4te.cache
 )
 
+# -%- use-tabs: no; -%-

@@ -8,3 +8,5 @@ EXTRA_DIST = \
 pkgconfigdir   = $(libdir)/pkgconfig
 pkgconfig_DATA = sde-utils-0.pc
 
+
+ACLOCAL_AMFLAGS =  -I m4
