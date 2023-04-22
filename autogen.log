@@ -1,0 +1,94 @@
++ SRC_DIR=
++ test -z ''
+++ pwd
++ SRC_DIR=/media/stuff/vadim/my/03-personal/SDE/libsde-utils
++ AC_VERSION=
++ AM_VERSION=
++ ACLOCAL_ARG=
++ ACLOCAL_DIR=
++ export AUTOMAKE=automake
++ AUTOMAKE=automake
++ export ACLOCAL=aclocal
++ ACLOCAL=aclocal
++ export AUTOHEADER=autoheader
++ AUTOHEADER=autoheader
++ export AUTOCONF=autoconf
++ AUTOCONF=autoconf
++ export AUTORECONF=autoreconf
++ AUTORECONF=autoreconf
++ export AUTOPOINT=autopoint
++ AUTOPOINT=autopoint
++ export LIBTOOLIZE=libtoolize
++ LIBTOOLIZE=libtoolize
++ export INTLTOOLIZE=intltoolize
++ INTLTOOLIZE=intltoolize
++ export GLIB_GETTEXTIZE=glib-gettextize
++ GLIB_GETTEXTIZE=glib-gettextize
++ export GTKDOCIZE=gtkdocize
++ GTKDOCIZE=gtkdocize
+++ uname
++ '[' xLinux = xOpenBSD ']'
+++ automake --version
+++ sed -e '2,$ d' -e 's/.* \([0-9]*\.[0-9]*\).*/\1/'
++ AM_INSTALLED_VERSION=1.16
++ case "$AM_INSTALLED_VERSION" in
++ echo /media/stuff/vadim/my/03-personal/SDE/libsde-utils
++ grep -E -q '[[:space:]]'
++ cd /media/stuff/vadim/my/03-personal/SDE/libsde-utils
++ ACLOCAL_ARG=' -I m4'
++ test -d m4-sde
++ test -d m4-static
++ '[' x '!=' x ']'
++ grep -q '^ACLOCAL_AMFLAGS' Makefile.am
++ sed -i 's/^ACLOCAL_AMFLAGS[ ]*=.*/ACLOCAL_AMFLAGS =  -I m4/' Makefile.am
++ test -f aclocal.m4
++ test -d m4
++ mkdir m4
++ grep -q '^AM_GNU_GETTEXT' ./configure.ac
++ grep -q '^AM_GLIB_GNU_GETTEXT' ./configure.ac
++ grep -q '^GTK_DOC_CHECK' ./configure.ac
++ grep -E -q '^(AC_PROG_INTLTOOL|IT_PROG_INTLTOOL)' ./configure.ac
++ libtoolize --version
++ head -1
+libtoolize (GNU libtool) 2.4.7.4-1ec8f-dirty
++ aclocal --version
++ head -1
+aclocal (GNU automake) 1.16.5
++ autoheader --version
++ head -1
+autoheader (GNU Autoconf) 2.71
++ automake --version
++ head -1
+automake (GNU automake) 1.16.5
++ autoconf --version
++ head -1
+autoconf (GNU Autoconf) 2.71
++ libtoolize --force --copy
+libtoolize: putting auxiliary files in AC_CONFIG_AUX_DIR, 'build-aux'.
+libtoolize: copying file 'build-aux/ltmain.sh'
+libtoolize: putting macros in AC_CONFIG_MACRO_DIRS, 'm4'.
+libtoolize: copying file 'm4/libtool.m4'
+libtoolize: copying file 'm4/ltoptions.m4'
+libtoolize: copying file 'm4/ltsugar.m4'
+libtoolize: copying file 'm4/ltversion.m4'
+libtoolize: copying file 'm4/lt~obsolete.m4'
++ aclocal -I m4
++ autoheader --force
++ automake --add-missing --copy --include-deps
+configure.ac:15: installing 'build-aux/compile'
+configure.ac:18: installing 'build-aux/config.guess'
+configure.ac:18: installing 'build-aux/config.sub'
+configure.ac:4: installing 'build-aux/install-sh'
+configure.ac:4: installing 'build-aux/missing'
+Makefile.am: installing './INSTALL'
+src/Makefile.am: installing 'build-aux/depcomp'
++ autoconf
+configure.ac:8: warning: The macro `AC_CONFIG_HEADER' is obsolete.
+configure.ac:8: You should run autoupdate.
+./lib/autoconf/status.m4:719: AC_CONFIG_HEADER is expanded from...
+configure.ac:8: the top level
+configure.ac:18: warning: The macro `AC_PROG_LIBTOOL' is obsolete.
+configure.ac:18: You should run autoupdate.
+m4/libtool.m4:100: AC_PROG_LIBTOOL is expanded from...
+configure.ac:18: the top level
++ rm -rf autom4te.cache

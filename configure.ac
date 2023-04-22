@@ -1,5 +1,5 @@
 AC_PREREQ(2.53)
-AC_INIT(sde-utils-0, 0.1.0-alpha, https://github.com/sde-gui/libsde-utils)
+AC_INIT(sde-utils-0, 0.1.0-r1, https://github.com/sde-gui/libsde-utils)
 AC_CONFIG_AUX_DIR([build-aux])
 AM_INIT_AUTOMAKE
 AM_MAINTAINER_MODE([enable])
